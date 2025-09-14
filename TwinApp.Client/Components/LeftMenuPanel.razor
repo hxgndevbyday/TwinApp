@@ -1,0 +1,29 @@
+<h3>Left Menu</h3>
+
+<div class="overlay-left-menu">
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="@GetTabClass("entities")" @onclick="@(() => SelectTab("entities"))">Entities</button>
+        <button class="@GetTabClass("settings")" @onclick="@(() => SelectTab("settings"))">Settings</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        @if (_activeTab == "entities")
+        {
+            <EntitiesTab />
+        }
+        else if (_activeTab == "settings")
+        {
+            <SettingsTab />
+        }
+    </div>
+</div>
+
+@code {
+    private string _activeTab = "entities";
+
+    private void SelectTab(string tab) => _activeTab = tab;
+
+    private string GetTabClass(string tab) => tab == _activeTab ? "tab active" : "tab";
+}

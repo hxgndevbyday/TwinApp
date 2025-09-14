@@ -13,7 +13,9 @@ else if (!Projects.HasActiveProject)
 }
 else
 {
+    @* <ControlPanel /> *@
     <ControlPanel />
+    <LeftMenuPanel  />
 }
 
 @code {
@@ -29,5 +31,10 @@ else
         Projects.OpenProject(projectId);
         await Graphics.LoadProjectAsync(projectId);
         StateHasChanged();
+    }
+    
+    protected override void OnInitialized()
+    {
+        Projects.OnProjectChanged += () => InvokeAsync(StateHasChanged);
     }
 }

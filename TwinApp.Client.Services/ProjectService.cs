@@ -26,9 +26,12 @@ public class ProjectService
         };
     }
 
+    public event Action? OnProjectChanged;
     public void OpenProject(string projectId)
     {
         ActiveProjectId = projectId;
+        OnProjectChanged?.Invoke(); // notify subscribers
+
     }
 
     // Simple DTO

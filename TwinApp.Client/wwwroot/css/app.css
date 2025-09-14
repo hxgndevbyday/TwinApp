@@ -32,3 +32,66 @@
     justify-content: center;
     margin-top: 1rem;
 }
+
+
+/* Left overlay panel for tabs and content */
+.overlay-left-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px;           /* adjust width */
+    height: 100%;
+    background: rgba(30, 30, 30, 0.85);
+    padding: 1rem;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    color: white;
+    z-index: 10;            /* above canvas */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.5);
+}
+
+/* Tabs container */
+.overlay-left-menu .tabs {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Individual tab buttons */
+.overlay-left-menu .tabs button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.overlay-left-menu .tabs button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Active tab */
+.overlay-left-menu .tabs button.tab.active {
+    border-bottom: 2px solid #00aaff;
+    font-weight: bold;
+}
+
+/* Tab content container */
+.overlay-left-menu .tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 0.5rem;
+}
+
+/* Optional: styling for EntitiesTab buttons */
+.entities-tab button,
+.settings-tab button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}

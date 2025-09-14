@@ -1,0 +1,30 @@
+<div class="settings-tab">
+    <h4>Settings</h4>
+
+    <div class="setting-item">
+        <label>Background Color:</label>
+        <input type="color" @bind="BackgroundColor" />
+    </div>
+
+    <div class="setting-item mt-2">
+        <label>Show Grid:</label>
+        <input type="checkbox" @bind="ShowGrid" />
+    </div>
+</div>
+
+@code {
+    private string BackgroundColor { get; set; } = "#000000";
+    private bool ShowGrid { get; set; } = true;
+
+    protected override void OnParametersSet()
+    {
+        // Apply changes whenever bound properties change
+        ApplySettings();
+    }
+
+    private void ApplySettings()
+    {
+        // TODO: call IGraphicService to update scene background or grid
+        Console.WriteLine($"Background: {BackgroundColor}, ShowGrid: {ShowGrid}");
+    }
+}

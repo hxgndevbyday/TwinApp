@@ -1,0 +1,26 @@
+@inject TwinApp.Client.Shared.IGraphicService Graphics
+
+<div class="entities-tab">
+    <h4>Entities</h4>
+
+    <button class="btn btn-secondary m-1" @onclick="AddSphere">Add Sphere</button>
+    <button class="btn btn-secondary m-1" @onclick="AddBox">Add Box</button>
+    <button class="btn btn-secondary m-1" @onclick="ClearScene">Clear Scene</button>
+</div>
+
+@code {
+    private async Task AddSphere()
+    {
+        await Graphics.AddAssetAsync("sphere1", "sphere");
+    }
+
+    private async Task AddBox()
+    {
+        await Graphics.AddAssetAsync("box1", "box");
+    }
+
+    private async Task ClearScene()
+    {
+        await Graphics.ClearSceneAsync();
+    }
+}
