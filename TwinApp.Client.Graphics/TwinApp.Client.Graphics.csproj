@@ -16,11 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\" />
+      <ProjectReference Include="..\TwinApp.Client.Shared\TwinApp.Client.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TwinApp.Client.Shared\TwinApp.Client.Shared.csproj" />
+        <EmbeddedResource Include="wwwroot/js/babylonGraphics.js" />
     </ItemGroup>
+
 
 </Project>
