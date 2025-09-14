@@ -104,3 +104,6 @@ ServiceFabricBackup/
 *.ndf
 *.dbmdl
 *.dbproj.schemaview
+
+TwinApp.Client\obj
+TwinApp.Client\bin
