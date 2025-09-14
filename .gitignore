@@ -16,3 +16,5 @@
 /node_modules/babylonjs/tsconfig.json
 /node_modules/babylonjs/webpack.config.js
 /node_modules/.package-lock.json
+*/obj
+*/bin
