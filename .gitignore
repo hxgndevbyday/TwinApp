@@ -73,7 +73,6 @@ obj/
 !.vscode/extensions.json
 
 # ASP.NET / Blazor specific
-wwwroot/
 *.pubxml
 *.publishproj
 ScaffoldingReadMe.txt
