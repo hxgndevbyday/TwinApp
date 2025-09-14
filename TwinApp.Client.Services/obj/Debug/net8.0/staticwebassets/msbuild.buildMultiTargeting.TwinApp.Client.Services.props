@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\TwinApp.Client.Services.props" />
+</Project>

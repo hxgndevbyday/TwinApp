@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "nzA3AbmRiDk8+TeSiOx4qql1GuHniIBDDeb8e+jvCog=",
+  "Source": "TwinApp.Client.Graphics",
+  "BasePath": "_content/TwinApp.Client.Graphics",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "TwinApp.Client.Graphics\\wwwroot",
+      "Source": "TwinApp.Client.Graphics",
+      "ContentRoot": "C:\\Users\\xrfx1\\RiderProjects\\TwinApp\\TwinApp.Client.Graphics\\wwwroot\\",
+      "BasePath": "_content/TwinApp.Client.Graphics",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}

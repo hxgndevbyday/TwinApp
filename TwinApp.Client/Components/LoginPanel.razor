@@ -1,0 +1,19 @@
+<div class="overlay-box">
+    <h3>Login</h3>
+    <input placeholder="Username" @bind="_username" />
+    <input type="password" placeholder="Password" @bind="_password" />
+    <button class="btn btn-primary mt-2" @onclick="DoLogin">Login</button>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnLoginSuccess { get; set; }
+
+    private string _username = "";
+    private string _password = "";
+
+    private async Task DoLogin()
+    {
+        await Task.Delay(200); // mock delay
+        await OnLoginSuccess.InvokeAsync();
+    }
+}

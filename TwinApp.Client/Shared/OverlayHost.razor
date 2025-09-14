@@ -1,0 +1,33 @@
+@using TwinApp.Client.Services
+@inject AuthService Auth
+@inject ProjectService Projects
+@inject TwinApp.Client.Shared.IGraphicService Graphics
+
+@if (!Auth.IsLoggedIn)
+{
+    <LoginPanel OnLoginSuccess="HandleLoginSuccess" />
+}
+else if (!Projects.HasActiveProject)
+{
+    <ProjectSelectionPanel OnProjectSelected="HandleProjectSelection" Projects="Projects.Projects" />
+}
+else
+{
+    <ControlPanel />
+}
+
+@code {
+    private async Task HandleLoginSuccess()
+    {
+        Auth.Login();
+        await Projects.LoadProjectsAsync();
+        StateHasChanged();
+    }
+
+    private async Task HandleProjectSelection(string projectId)
+    {
+        Projects.OpenProject(projectId);
+        await Graphics.LoadProjectAsync(projectId);
+        StateHasChanged();
+    }
+}

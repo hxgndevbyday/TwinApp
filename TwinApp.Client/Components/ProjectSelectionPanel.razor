@@ -1,0 +1,29 @@
+@using TwinApp.Client.Services
+<div class="overlay-box">
+    <h3>Select Project</h3>
+    @if (Projects is null || Projects.Count == 0)
+    {
+        <p>Loading projects...</p>
+    }
+    else
+    {
+        <div class="project-list">
+            @foreach (var project in Projects)
+            {
+                <button class="btn btn-outline-light m-1" @onclick="() => Select(project.Id)">
+                    @project.Name
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public IReadOnlyList<ProjectService.ProjectDto>? Projects { get; set; }
+    [Parameter] public EventCallback<string> OnProjectSelected { get; set; }
+
+    private async Task Select(string id)
+    {
+        await OnProjectSelected.InvokeAsync(id);
+    }
+}
