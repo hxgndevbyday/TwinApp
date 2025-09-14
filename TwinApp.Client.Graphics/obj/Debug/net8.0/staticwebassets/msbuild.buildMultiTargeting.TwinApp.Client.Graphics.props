@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\TwinApp.Client.Graphics.props" />
-</Project>

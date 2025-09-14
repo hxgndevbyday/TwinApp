@@ -107,6 +107,14 @@ ServiceFabricBackup/
 
 TwinApp.Client\obj\*
 TwinApp.Client\bin\*
+TwinApp.Client.Graphics\bin\*
+TwinApp.Client.Graphics\obj\*
+TwinApp.Client.Shared\bin\*
+TwinApp.Client.Shared\obj\*
+TwinApp.Client.Services\bin\*
+TwinApp.Client.Services\obj\*
+
+
 
 # Ignore all bin and obj folders
 **/bin/
