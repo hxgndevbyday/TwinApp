@@ -1,11 +1,18 @@
-@using TwinApp.Client.Services
-@inject AuthService Auth
-@inject ProjectService Projects
-@inject TwinApp.Client.Shared.IGraphicService Graphics
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@if (!Auth.IsLoggedIn)
+@using TwinApp.Client.Services
+@inject AuthServices Auth
+@inject ProjectService Projects
+@inject IGraphicService Graphics
+
+@if (!_isAuthChecked)
 {
-    <LoginPanel OnLoginSuccess="HandleLoginSuccess" />
+    <LoginPanel/>
+
+}
+else if (!_isLoggedIn)
+{
+    <LoginPanel/>
 }
 else if (!Projects.HasActiveProject)
 {
@@ -13,17 +20,27 @@ else if (!Projects.HasActiveProject)
 }
 else
 {
-    @* <ControlPanel /> *@
     <ControlPanel />
-    <LeftMenuPanel  />
+    <LeftMenuPanel />
 }
 
 @code {
-    private async Task HandleLoginSuccess()
+    private bool _isLoggedIn;
+    private bool _isAuthChecked = false;
+
+    protected override async Task OnInitializedAsync()
     {
-        Auth.Login();
-        await Projects.LoadProjectsAsync();
-        StateHasChanged();
+        // Subscribe to project changes
+        Projects.OnProjectChanged += () => InvokeAsync(StateHasChanged);
+
+        // Check authentication status
+        _isLoggedIn = await Auth.IsLoggedInAsync();
+        _isAuthChecked = true;
+
+        if (_isLoggedIn)
+        {
+            await Projects.LoadProjectsAsync();
+        }
     }
 
     private async Task HandleProjectSelection(string projectId)
@@ -31,10 +48,5 @@ else
         Projects.OpenProject(projectId);
         await Graphics.LoadProjectAsync(projectId);
         StateHasChanged();
-    }
-    
-    protected override void OnInitialized()
-    {
-        Projects.OnProjectChanged += () => InvokeAsync(StateHasChanged);
     }
 }

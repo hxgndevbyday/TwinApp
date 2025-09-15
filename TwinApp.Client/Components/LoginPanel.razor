@@ -1,8 +1,17 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+
 <div class="overlay-box">
     <h3>Login</h3>
     <input placeholder="Username" @bind="_username" />
     <input type="password" placeholder="Password" @bind="_password" />
     <button class="btn btn-primary mt-2" @onclick="DoLogin">Login</button>
+    
+    <!-- Real Microsoft SSO login -->
+    @* <RemoteAuthenticatorView Action="LogIn" /> *@
+    <MsalAuthentication>
+        <RemoteAuthenticatorView Action="LogIn" />
+    </MsalAuthentication>
 </div>
 
 @code {
@@ -15,5 +24,12 @@
     {
         await Task.Delay(200); // mock delay
         await OnLoginSuccess.InvokeAsync();
+    }
+    
+    @code {
+        private void DoLoginMicrosoft()
+        {
+            Navigation.NavigateTo("MicrosoftIdentity/Account/SignIn", forceLoad: true);
+        }
     }
 }

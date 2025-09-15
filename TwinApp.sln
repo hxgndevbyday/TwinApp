@@ -8,6 +8,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinApp.Client.Graphics", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinApp.Client.Shared", "TwinApp.Client.Shared\TwinApp.Client.Shared.csproj", "{648AB0B8-075B-4F47-8ABA-6407EE27F713}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinApp.ProjectService.API", "TwinApp.ProjectService.API\TwinApp.ProjectService.API.csproj", "{55FA3245-F0B6-4693-9239-950AA8BB59F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{53F75572-7D5F-4039-B7E3-D60D9B35CAFA}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +37,9 @@ Global
 		{648AB0B8-075B-4F47-8ABA-6407EE27F713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{648AB0B8-075B-4F47-8ABA-6407EE27F713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{648AB0B8-075B-4F47-8ABA-6407EE27F713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55FA3245-F0B6-4693-9239-950AA8BB59F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55FA3245-F0B6-4693-9239-950AA8BB59F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55FA3245-F0B6-4693-9239-950AA8BB59F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55FA3245-F0B6-4693-9239-950AA8BB59F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

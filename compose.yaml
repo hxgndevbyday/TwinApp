@@ -1,0 +1,7 @@
+﻿services:
+  twinapp.projectservice.api:
+    image: twinapp.projectservice.api
+    build:
+      context: .
+      dockerfile: TwinApp.ProjectService.API/Dockerfile
+
