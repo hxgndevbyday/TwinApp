@@ -15,3 +15,14 @@ window.addAsset = (assetId, modelPath) => {
 window.clearScene = () => {
     TwinAppGraphics.clearScene();
 };
+
+export function loadBabylon() {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '_content/TwinApp.Client.Graphics/babylonGraphics.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+

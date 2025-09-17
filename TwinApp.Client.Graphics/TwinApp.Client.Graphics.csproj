@@ -4,6 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <IncludeAssetsInProject>true</IncludeAssetsInProject>
     </PropertyGroup>
 
 
@@ -22,6 +24,7 @@
     <ItemGroup>
         <EmbeddedResource Include="wwwroot/js/babylonGraphics.js" />
     </ItemGroup>
+    
 
 
 </Project>

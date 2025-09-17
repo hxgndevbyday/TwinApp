@@ -1,8 +1,24 @@
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
+using TwinApp.ProjectService.API.Models;
 using TwinApp.ProjectService.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowClientApp",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 // Add services to the container
 builder.Services.AddEndpointsApiExplorer();
@@ -17,6 +33,8 @@ builder.Services.AddSingleton<ProjectRepository>();
 
 
 var app = builder.Build();
+
+app.UseCors("AllowClientApp");
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -44,12 +62,44 @@ app.MapGet("/projects/{id}", async (string id, ProjectRepository repo) =>
     return project is not null ? Results.Ok(project) : Results.NotFound();
 });
 
-// Create project
-app.MapPost("/projects", async (BfProject newProject, ProjectRepository repo) =>
+// Upload the project
+app.MapPost("/projects/upload", async (IFormFile file, ProjectRepository repo) =>
 {
-    var project = newProject with { CreatedAt = DateTime.UtcNow };
+    if (file == null || file.Length == 0)
+        return Results.BadRequest("Empty file.");
+    
+    var fileName = Path.GetFileName(file.FileName);
+
+    var fsId = await repo.CreateGridFsBlobAsync(fileName, file.OpenReadStream());
+    
+    var project = new BfProgramMetadata(
+        Id: Guid.NewGuid().ToString(),
+        ProgramName: fileName,
+        CreatedAt: DateTime.UtcNow,
+        GridFsId:fsId
+    );
+
     await repo.CreateAsync(project);
+
     return Results.Created($"/projects/{project.Id}", project);
+    
+}).DisableAntiforgery();
+
+
+// Download the project
+app.MapGet("/projects/{id}/download", async (string id, ProjectRepository repo) =>
+{
+    var project = await repo.GetByIdAsync(id);
+    if (project == null)
+        return Results.NotFound();
+    
+    var gridFsId = await repo.GetGridFsIdAsync(id);
+
+    var stream = await repo.GetGridFsBlobAsync(gridFsId);
+    if (stream == null)
+        return Results.NotFound("File not found in GridFS.");
+
+    return Results.File(stream, "application/bf", project.ProgramName);
 });
 
 
@@ -59,11 +109,3 @@ app.MapPost("/projects", async (BfProject newProject, ProjectRepository repo) =>
 
 app.Run();
 
-// Record definition
-public record BfProject(
-    [property: BsonId, BsonRepresentation(BsonType.String)] string Id,
-    string Name,
-    string OwnerUserId,
-    DateTime CreatedAt,
-    string ContentJson // raw .bf JSON for now
-);
