@@ -66,5 +66,11 @@ public class BabylonGraphicService : IGraphicService, IAsyncDisposable
         await _js.InvokeVoidAsync("window.TwinAppGraphics.clearScene");
     }
 
+    public async ValueTask LoadCad(string filePath)
+    {
+        await EnsureJsInjectedAsync();
+        await _js.InvokeVoidAsync("loadCAD", filePath);
+    }
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

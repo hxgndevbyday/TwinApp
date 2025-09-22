@@ -31,6 +31,7 @@ window.TwinAppGraphics = (() => {
             if (engine) engine.resize();
         });
 
+        
         // Signal that Babylon is ready
         initializedResolve();
     }
@@ -72,6 +73,7 @@ window.TwinAppGraphics = (() => {
                 break;
             default:
                 console.warn("Unknown project ID: " + projectId);
+                loadCAD("sample-data/m-20ia_35m/m-20ia_35m.stl");
         }
 
         // Rendering is already handled by runRenderLoop
@@ -87,6 +89,34 @@ window.TwinAppGraphics = (() => {
             if (mesh.name !== "__root__") mesh.dispose();
         });
     }
+
+    // Function to load STL model into the Babylon scene
+    window.loadCAD = (filePath) => {
+        if (!scene) {
+            console.error("Scene not initialized yet.");
+            return;
+        }
+
+        BABYLON.SceneLoader.ImportMesh(
+            null,                // meshNames → null = load all
+            "/",                 // rootUrl (relative to wwwroot in Blazor WASM)
+            filePath,            // filename
+            scene, // target scene
+            (meshes) => {
+                console.log("CAD loaded:", meshes);
+
+                // Optional: scale + center the model
+                meshes.forEach(m => {
+                    m.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01); // adjust as needed
+                    m.position = BABYLON.Vector3.Zero();
+                });
+            },
+            null,
+            (scene, message, exception) => {
+                console.error("Error loading CAD:", message, exception);
+            }
+        );
+    };
 
     return { initBabylon, loadProject, addAsset, clearScene };
 })();

@@ -6,4 +6,5 @@ public interface IGraphicService
     ValueTask LoadProjectAsync(string projectId);
     ValueTask AddAssetAsync(string assetId, string modelPath);
     ValueTask ClearSceneAsync();
+    ValueTask LoadCad(string filePath);
 }

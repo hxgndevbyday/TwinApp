@@ -48,6 +48,9 @@
                 {
                     await Projects.LoadProjectsAsync();
                 }
+
+                await Graphics.LoadCad("sample-data/m-20ia_35m/m-20ia_35m.stl");
+                StateHasChanged();  
             }
 
             private async Task HandleProjectSelection(string projectId)
@@ -55,6 +58,10 @@
                 await Task.Delay(1000);
                 Projects.OpenProject(projectId);
 
+                // ProjectToGraphicDto ?
+                //  Take just the valuable information for the graphic service,
+                // for example, the machines and its positions,
+                // 
                 await Graphics.LoadProjectAsync(projectId);
 
                 StateHasChanged();
