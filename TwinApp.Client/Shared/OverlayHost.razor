@@ -18,7 +18,11 @@
         @if (!Projects.HasActiveProject)
         {
             Trace.WriteLine("OverlayHost Authorized :: No Active Project");
-            <ProjectSelectionPanel OnProjectSelected="HandleProjectSelection" Projects="Projects.Projects"/>
+            <ProjectSelectionPanel 
+                OnProjectSelected="HandleProjectSelection" 
+                ProjectList="Projects.Projects"
+                OnProjectUpload="HandleProjectUpload" />
+
         }
         else
         {
@@ -29,6 +33,7 @@
 
         @code {
             private bool _isLoggedIn;
+            private bool _isAuthChecked = false;
 
             protected override async Task OnInitializedAsync()
             {
@@ -37,6 +42,7 @@
 
                 // Check authentication status
                 _isLoggedIn = await Auth.IsLoggedInAsync();
+                _isAuthChecked = true;
 
                 if (_isLoggedIn)
                 {
@@ -54,6 +60,16 @@
                 StateHasChanged();
             }
 
+            private async Task HandleProjectUpload(IBrowserFile file)
+            {
+                using var content = new MultipartFormDataContent();
+                using var stream = file.OpenReadStream(50 * 1024 * 1024); // 50MB limit
+                await Projects.UploadProjectAsync(stream, file.Name);
+                await Projects.LoadProjectsAsync();
+                StateHasChanged();
+                
+            }
+
             private async Task HandleOnLoginSucceeded()
             {
                 Navigation.NavigateTo("/", true);
@@ -64,3 +80,11 @@
     </Authorized>
 </AuthorizeView>
 
+@code
+{
+    protected override void OnInitialized()
+    {
+        Projects.OnProjectsUpdated += () => InvokeAsync(StateHasChanged);
+    }
+
+}

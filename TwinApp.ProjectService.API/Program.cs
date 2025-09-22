@@ -4,6 +4,8 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using TwinApp.ProjectService.API.Models;
 using TwinApp.ProjectService.API.Repository;
+using TwinApp.ProjectService.API.Services;
+using TwinApp.ProjectService.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +28,10 @@ builder.Services.AddSwaggerGen();
 
 // TODO: Add authentication, MongoDB, logging, etc.
 builder.Services.AddSingleton<ProjectRepository>();
-
-
+builder.Services.AddSingleton<IProjectProcessor, ProjectProcessor>();
+// Register the queue as a hosted service
+builder.Services.AddSingleton<ProjectProcessingQueue>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<ProjectProcessingQueue>());
 
 
 
@@ -101,6 +105,21 @@ app.MapGet("/projects/{id}/download", async (string id, ProjectRepository repo) 
 
     return Results.File(stream, "application/bf", project.ProgramName);
 });
+
+// Trigger project processing
+app.MapPost("/projects/{id}/process", async (string id,  [FromServices] ProjectRepository repo,  [FromServices] ProjectProcessingQueue queue) =>
+{
+    // Validate project exists
+    var project = await repo.GetByIdAsync(id);
+    if (project == null)
+        return Results.NotFound($"Project {id} not found.");
+
+    // Enqueue for background processing
+    await queue.Enqueue(id);
+
+    return Results.Accepted($"/projects/{id}/process", $"Project {id} enqueued for processing.");
+});
+
 
 
 

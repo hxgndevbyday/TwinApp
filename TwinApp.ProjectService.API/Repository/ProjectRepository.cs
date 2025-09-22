@@ -12,6 +12,8 @@ public class ProjectRepository
     private readonly IMongoCollection<BfProgramMetadata> _projects;
     private readonly GridFSBucket _gridFs;
     
+    private readonly IMongoCollection<ProjectEntity> _entities;
+    
     public ProjectRepository(IConfiguration config)
     {
         var mongoSettings = config.GetSection("MongoDb");
@@ -20,8 +22,32 @@ public class ProjectRepository
         
         _projects = database.GetCollection<BfProgramMetadata>(mongoSettings["ProjectsCollection"]);
         _gridFs = new GridFSBucket(database);
+        
+        _entities = database.GetCollection<ProjectEntity>("project_entities");
     }
 
+    #region Process Projects
+
+    public async Task InsertEntityAsync(string projectId, string name, BsonDocument data, string? parentId = null)
+    {
+        var entity = new ProjectEntity
+        {
+            ProjectId = projectId,
+            Name = name,
+            Data = data,
+            ParentId = parentId ?? string.Empty
+        };
+    
+        await _entities.InsertOneAsync(entity);
+    }
+
+    public async Task<List<ProjectEntity>> GetEntitiesByProjectAsync(string projectId)
+    {
+        return await _entities.Find(e => e.ProjectId == projectId).ToListAsync();
+    }
+
+
+    #endregion Process Projects 
     public async Task<List<BfProgramMetadataDto>> GetAllAsync()
     {
         var readProjects=await _projects.Find(_ => true).ToListAsync();

@@ -1,7 +1,17 @@
 @using TwinApp.Client.Services
+@inject ProjectService ProjectService
+
+
 <div class="overlay-box">
-    <h3>Select Project</h3>
-    @if (Projects is null || Projects.Count == 0)
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Select Project</h3>
+        <!-- Upload button triggers hidden InputFile -->
+        <label class="btn btn-outline-light btn-sm mb-0">
+            Upload
+            <InputFile OnChange="OnFileSelected" style="display:none;" />
+        </label>
+    </div>
+    @if (ProjectList is null || ProjectList.Count == 0)
     {
         <p>Loading projects...</p>
     }
@@ -17,9 +27,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                @if (Projects != null)
+                @if (ProjectList != null)
                 {
-                    @foreach (var project in Projects)
+                    @foreach (var project in ProjectList)
                     {
                         <tr>
                             <td>@project.Name</td>
@@ -41,11 +51,20 @@
 </div>
 
 @code {
-    [Parameter] public IReadOnlyList<ProjectService.ProjectDto>? Projects { get; set; }
+    [Parameter] public IReadOnlyList<ProjectService.ProjectDto>? ProjectList { get; set; }
     [Parameter] public EventCallback<string> OnProjectSelected { get; set; }
+    [Parameter] public EventCallback<IBrowserFile> OnProjectUpload { get; set; }
 
     private async Task Select(string id)
     {
         await OnProjectSelected.InvokeAsync(id);
     }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        await OnProjectUpload.InvokeAsync(file);
+    }
+    
+
 }
