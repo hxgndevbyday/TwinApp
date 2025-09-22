@@ -17,7 +17,11 @@
         @if (!Projects.HasActiveProject)
         {
             Trace.WriteLine("OverlayHost Authorized :: No Active Project");
-            <ProjectSelectionPanel OnProjectSelected="HandleProjectSelection" Projects="Projects.Projects"/>
+            <ProjectSelectionPanel 
+                OnProjectSelected="HandleProjectSelection" 
+                ProjectList="Projects.Projects"
+                OnProjectUpload="HandleProjectUpload" />
+
         }
         else
         {
@@ -55,8 +59,26 @@
                 StateHasChanged();
             }
 
+            private async Task HandleProjectUpload(IBrowserFile file)
+            {
+                using var content = new MultipartFormDataContent();
+                using var stream = file.OpenReadStream(50 * 1024 * 1024); // 50MB limit
+                await Projects.UploadProjectAsync(stream, file.Name);
+                await Projects.LoadProjectsAsync();
+                StateHasChanged();
+                
+            }
+
         }
 
     </Authorized>
 </AuthorizeView>
 
+@code
+{
+    protected override void OnInitialized()
+    {
+        Projects.OnProjectsUpdated += () => InvokeAsync(StateHasChanged);
+    }
+
+}
