@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @using TwinApp.Client.Services
+@inject NavigationManager Navigation
 @inject AuthServices Auth
 @inject ProjectService Projects
 @inject IGraphicService Graphics
@@ -10,7 +11,7 @@
 <AuthorizeView>
     
     <NotAuthorized>
-        <LoginPanel/>
+        <LoginPanel OnLoginSuccess="HandleOnLoginSucceeded"/>
     </NotAuthorized>
 
     <Authorized>
@@ -28,7 +29,6 @@
 
         @code {
             private bool _isLoggedIn;
-            private bool _isAuthChecked = false;
 
             protected override async Task OnInitializedAsync()
             {
@@ -37,7 +37,6 @@
 
                 // Check authentication status
                 _isLoggedIn = await Auth.IsLoggedInAsync();
-                _isAuthChecked = true;
 
                 if (_isLoggedIn)
                 {
@@ -53,6 +52,11 @@
                 await Graphics.LoadProjectAsync(projectId);
 
                 StateHasChanged();
+            }
+
+            private async Task HandleOnLoginSucceeded()
+            {
+                Navigation.NavigateTo("/", true);
             }
 
         }
