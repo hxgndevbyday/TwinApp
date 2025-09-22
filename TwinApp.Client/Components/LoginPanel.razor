@@ -25,11 +25,5 @@
         await Task.Delay(200); // mock delay
         await OnLoginSuccess.InvokeAsync();
     }
-    
-    @code {
-        private void DoLoginMicrosoft()
-        {
-            Navigation.NavigateTo("MicrosoftIdentity/Account/SignIn", forceLoad: true);
-        }
-    }
+
 }

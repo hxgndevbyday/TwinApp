@@ -7,14 +7,36 @@
     }
     else
     {
-        <div class="project-list">
-            @foreach (var project in Projects)
-            {
-                <button class="btn btn-outline-light m-1" @onclick="() => Select(project.Id)">
-                    @project.Name
-                </button>
-            }
+        <div class="project-list table-responsive">
+            <table class="table text-light">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Projects != null)
+                {
+                    @foreach (var project in Projects)
+                    {
+                        <tr>
+                            <td>@project.Name</td>
+                            <td>@project.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <button class="btn btn-outline-light btn-sm"
+                                        @onclick="() => Select(project.Id)">
+                                    Open
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
         </div>
+
     }
 </div>
 

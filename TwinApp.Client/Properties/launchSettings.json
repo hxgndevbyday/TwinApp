@@ -16,7 +16,14 @@
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "http://localhost:5175",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft": "Information",
+        "Logging__LogLevel__Microsoft.Hosting.Lifetime": "Information",
+        "DOTNET_HOST_TRACE": "1",
+        "DOTNET_HOST_TRACE_VERBOSE": "1",
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug",
+        "BlazorWebAssemblyEnableDebugging": "true"
       }
     },
     "https": {
@@ -26,7 +33,14 @@
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:7004;http://localhost:5175",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft": "Information",
+        "Logging__LogLevel__Microsoft.Hosting.Lifetime": "Information",
+        "DOTNET_HOST_TRACE": "1",
+        "DOTNET_HOST_TRACE_VERBOSE": "1",
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug",
+        "BlazorWebAssemblyEnableDebugging": "true"
       }
     },
     "IIS Express": {
@@ -34,7 +48,14 @@
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft": "Information",
+        "Logging__LogLevel__Microsoft.Hosting.Lifetime": "Information",
+        "DOTNET_HOST_TRACE": "1",
+        "DOTNET_HOST_TRACE_VERBOSE": "1",
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug",
+        "BlazorWebAssemblyEnableDebugging": "true"
       }
     }
   }

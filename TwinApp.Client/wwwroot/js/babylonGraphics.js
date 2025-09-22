@@ -1,6 +1,8 @@
 window.TwinAppGraphics = (() => {
     let engine = null;
     let scene = null;
+    let initializedResolve;
+    let initialized = new Promise(resolve => { initializedResolve = resolve; });
 
     function initBabylon(canvasId) {
         const canvas = document.getElementById(canvasId);
@@ -21,12 +23,26 @@ window.TwinAppGraphics = (() => {
         new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
         BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
 
-        engine.runRenderLoop(() => scene.render());
-        window.addEventListener("resize", () => engine.resize());
+        engine.runRenderLoop(() => {
+            if (scene) scene.render();
+        });
+
+        window.addEventListener("resize", () => {
+            if (engine) engine.resize();
+        });
+
+        // Signal that Babylon is ready
+        initializedResolve();
     }
 
-    function loadProject(projectId) {
-        if (!scene) return;
+    async function loadProject(projectId) {
+        // Wait for engine/scene to be ready
+        await initialized;
+
+        if (!scene) {
+            console.warn("Babylon scene not ready yet, cannot load project.");
+            return;
+        }
 
         // Remove old meshes except root
         scene.meshes.forEach(mesh => {
@@ -58,12 +74,19 @@ window.TwinAppGraphics = (() => {
                 console.warn("Unknown project ID: " + projectId);
         }
 
-        // Optional: force a render update immediately
-        if (engine) engine.requestAnimationFrame(() => scene.render());
+        // Rendering is already handled by runRenderLoop
     }
 
-    function addAsset(assetId, path) { /* ... */ }
-    function clearScene() { /* ... */ }
+    function addAsset(assetId, path) {
+        // Optional: implement loading additional assets
+    }
+
+    function clearScene() {
+        if (!scene) return;
+        scene.meshes.forEach(mesh => {
+            if (mesh.name !== "__root__") mesh.dispose();
+        });
+    }
 
     return { initBabylon, loadProject, addAsset, clearScene };
 })();

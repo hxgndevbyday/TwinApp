@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TwinApp.Client;
-using TwinApp.Client.Graphics;
+using TwinApp.Client.Graphics_Implementations;
 using TwinApp.Client.Services;
 using TwinApp.Client.Shared;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 builder.Services.AddScoped(sp =>
 {
@@ -29,7 +31,7 @@ builder.Services.AddScoped<IGraphicService, BabylonGraphicService>();
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-
+    options.ProviderOptions.LoginMode = "quiet";
     // Optional: add scopes for your backend API
     // options.ProviderOptions.DefaultAccessTokenScopes.Add("api://268c834d-59bf-4b45-8891-86245beca87d/.default");
 });

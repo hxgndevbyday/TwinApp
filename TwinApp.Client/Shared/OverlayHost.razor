@@ -20,14 +20,13 @@ else if (!Projects.HasActiveProject)
 }
 else
 {
-    <ControlPanel />
     <LeftMenuPanel />
 }
 
 @code {
     private bool _isLoggedIn;
     private bool _isAuthChecked = false;
-
+    
     protected override async Task OnInitializedAsync()
     {
         // Subscribe to project changes
@@ -46,7 +45,9 @@ else
     private async Task HandleProjectSelection(string projectId)
     {
         Projects.OpenProject(projectId);
+
         await Graphics.LoadProjectAsync(projectId);
+        
         StateHasChanged();
     }
 }
