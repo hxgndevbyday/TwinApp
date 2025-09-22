@@ -1,0 +1,36 @@
+@page "/"
+@inject TwinApp.Client.Shared.IGraphicService Graphics
+
+<PageTitle>Twin App</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="twinapp-container">
+    
+            
+            <!-- Overlay panels -->
+            <OverlayHost/>
+
+        </div>
+        
+        @code {
+            private bool _initialized;
+
+            protected override async Task OnAfterRenderAsync(bool firstRender)
+            {
+                if (firstRender && !_initialized)
+                {
+                    // Ensure JS engine is initialized
+                    await Graphics.InitializeAsync();
+
+                    StateHasChanged();
+
+                    _initialized = true;
+                }
+            }
+        }
+    </Authorized>
+</AuthorizeView>
+
+   
+

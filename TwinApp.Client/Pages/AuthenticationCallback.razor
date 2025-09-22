@@ -1,0 +1,14 @@
+@page "/authentication/login-callback"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+<RemoteAuthenticatorView Action="@Action" />
+
+@code{
+    [Parameter] public string? Action { get; set; }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        StateHasChanged();
+        base.OnAfterRender(firstRender);
+    }
+
+}
+

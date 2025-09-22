@@ -1,3 +1,4 @@
+@using System.Diagnostics
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @using TwinApp.Client.Services
@@ -5,49 +6,57 @@
 @inject ProjectService Projects
 @inject IGraphicService Graphics
 
-@if (!_isAuthChecked)
-{
-    <LoginPanel/>
 
-}
-else if (!_isLoggedIn)
-{
-    <LoginPanel/>
-}
-else if (!Projects.HasActiveProject)
-{
-    <ProjectSelectionPanel OnProjectSelected="HandleProjectSelection" Projects="Projects.Projects" />
-}
-else
-{
-    <LeftMenuPanel />
-}
-
-@code {
-    private bool _isLoggedIn;
-    private bool _isAuthChecked = false;
+<AuthorizeView>
     
-    protected override async Task OnInitializedAsync()
-    {
-        // Subscribe to project changes
-        Projects.OnProjectChanged += () => InvokeAsync(StateHasChanged);
+    <NotAuthorized>
+        <LoginPanel/>
+    </NotAuthorized>
 
-        // Check authentication status
-        _isLoggedIn = await Auth.IsLoggedInAsync();
-        _isAuthChecked = true;
-
-        if (_isLoggedIn)
+    <Authorized>
+        @if (!Projects.HasActiveProject)
         {
-            await Projects.LoadProjectsAsync();
+            Trace.WriteLine("OverlayHost Authorized :: No Active Project");
+            <ProjectSelectionPanel OnProjectSelected="HandleProjectSelection" Projects="Projects.Projects"/>
         }
-    }
+        else
+        {
+            Trace.WriteLine($"OverlayHost Authorized :: Active Project {Projects.ActiveProjectId}");
+            
+            <LeftMenuPanel/>
+        }
 
-    private async Task HandleProjectSelection(string projectId)
-    {
-        Projects.OpenProject(projectId);
+        @code {
+            private bool _isLoggedIn;
+            private bool _isAuthChecked = false;
 
-        await Graphics.LoadProjectAsync(projectId);
-        
-        StateHasChanged();
-    }
-}
+            protected override async Task OnInitializedAsync()
+            {
+                // Subscribe to project changes
+                Projects.OnProjectChanged += () => InvokeAsync(StateHasChanged);
+
+                // Check authentication status
+                _isLoggedIn = await Auth.IsLoggedInAsync();
+                _isAuthChecked = true;
+
+                if (_isLoggedIn)
+                {
+                    await Projects.LoadProjectsAsync();
+                }
+            }
+
+            private async Task HandleProjectSelection(string projectId)
+            {
+                await Task.Delay(1000);
+                Projects.OpenProject(projectId);
+
+                await Graphics.LoadProjectAsync(projectId);
+
+                StateHasChanged();
+            }
+
+        }
+
+    </Authorized>
+</AuthorizeView>
+
