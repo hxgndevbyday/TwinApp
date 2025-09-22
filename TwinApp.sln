@@ -11,6 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{53F75572-7D5F-4039-B7E3-D60D9B35CAFA}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinApp.ProjectService.Shared", "TwinApp.ProjectService.Shared\TwinApp.ProjectService.Shared.csproj", "{4ADA2F57-D77A-415A-89F1-0C846248BEDB}"
