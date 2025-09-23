@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using TwinApp.ProjectService.API.Models;
+using TwinApp.ProjectService.API.Models.Mappers;
 using TwinApp.ProjectService.API.Repository;
 using TwinApp.ProjectService.API.Services;
 using TwinApp.ProjectService.API.Services.Interfaces;
@@ -71,10 +72,14 @@ app.MapPost("/projects/upload", async (IFormFile file, ProjectRepository repo) =
 {
     if (file == null || file.Length == 0)
         return Results.BadRequest("Empty file.");
-    
+
     var fileName = Path.GetFileName(file.FileName);
 
-    var fsId = await repo.CreateGridFsBlobAsync(fileName, file.OpenReadStream());
+    // Convert JSON to BSON stream
+    var bsonStream = ProjectMappers.FileToBsonDoc(file);
+
+    // Upload BSON to GridFS
+    var fsId = await repo.CreateGridFsBlobAsync(fileName, bsonStream);
     
     var project = new BfProgramMetadata(
         Id: Guid.NewGuid().ToString(),
@@ -98,12 +103,14 @@ app.MapGet("/projects/{id}/download", async (string id, ProjectRepository repo) 
         return Results.NotFound();
     
     var gridFsId = await repo.GetGridFsIdAsync(id);
-
-    var stream = await repo.GetGridFsBlobAsync(gridFsId);
-    if (stream == null)
+    var bsonStream = await repo.GetGridFsBlobAsync(gridFsId);
+    if (bsonStream == null)
         return Results.NotFound("File not found in GridFS.");
 
-    return Results.File(stream, "application/bf", project.ProgramName);
+    // Convert BSON → JSON stream
+    var jsonStream = ProjectMappers.BsonToJsonStreamAsync(bsonStream);
+
+    return Results.File(jsonStream, "application/bf", project.ProgramName.Replace(".json", ".bf"));
 });
 
 // Trigger project processing

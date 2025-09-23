@@ -28,15 +28,17 @@ public class ProjectRepository
 
     #region Process Projects
 
-    public async Task InsertEntityAsync(string projectId, string name, BsonDocument data, string? parentId = null)
+    public async Task InsertEntityAsync(string projectId, string name, BsonDocument data, ObjectId gridFsId,string? parentId = null)
     {
         var entity = new ProjectEntity
-        {
-            ProjectId = projectId,
-            Name = name,
-            Data = data,
-            ParentId = parentId ?? string.Empty
-        };
+        (
+            Id: Guid.NewGuid().ToString(),
+            ProjectId: projectId,
+            Name: name,
+            Data: data,
+            ParentId: parentId ?? string.Empty,
+            GridFsId: gridFsId
+        );
     
         await _entities.InsertOneAsync(entity);
     }
