@@ -10,3 +10,11 @@ public record ProjectEntity(
     BsonDocument Data,
     ObjectId GridFsId // id for the raw .bf JSON 
 );
+
+public record SectionEntity(
+    string EntityType,
+    string SectionType,
+    string ParentId,
+    BsonDocument Components,
+    DateTime CreatedAt
+);

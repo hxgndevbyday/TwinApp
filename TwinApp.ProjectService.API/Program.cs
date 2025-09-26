@@ -7,6 +7,7 @@ using TwinApp.ProjectService.API.Models.Mappers;
 using TwinApp.ProjectService.API.Repository;
 using TwinApp.ProjectService.API.Services;
 using TwinApp.ProjectService.API.Services.Interfaces;
+using TwinApp.ProjectService.API.Services.Raw_Project_Processing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,6 +115,7 @@ app.MapGet("/projects/{id}/download", async (string id, ProjectRepository repo) 
 });
 
 // Trigger project processing
+// It enqueue the operation, but the extraction operation is not yet working :(
 app.MapPost("/projects/{id}/process", async (string id,  [FromServices] ProjectRepository repo,  [FromServices] ProjectProcessingQueue queue) =>
 {
     // Validate project exists

@@ -7,7 +7,7 @@ namespace TwinApp.ProjectService.API.Repository;
 
 using MongoDB.Driver;
 
-public class ProjectRepository
+public class ProjectRepository : IProjectRepository
 {
     private readonly IMongoCollection<BfProgramMetadata> _projects;
     private readonly GridFSBucket _gridFs;
@@ -23,7 +23,7 @@ public class ProjectRepository
         _projects = database.GetCollection<BfProgramMetadata>(mongoSettings["ProjectsCollection"]);
         _gridFs = new GridFSBucket(database);
         
-        _entities = database.GetCollection<ProjectEntity>("project_entities");
+        _entities = database.GetCollection<ProjectEntity>("ProjectEntitiesCollection");
     }
 
     #region Process Projects

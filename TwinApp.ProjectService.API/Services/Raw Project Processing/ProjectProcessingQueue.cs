@@ -1,18 +1,12 @@
 ﻿using System.Threading.Channels;
 using TwinApp.ProjectService.API.Services.Interfaces;
 
-namespace TwinApp.ProjectService.API.Services;
+namespace TwinApp.ProjectService.API.Services.Raw_Project_Processing;
 
-public class ProjectProcessingQueue : BackgroundService
+public class ProjectProcessingQueue(IProjectProcessor processor) : BackgroundService
 {
     private readonly SemaphoreSlim _concurrency = new SemaphoreSlim(3); // max 3 projects at a time
     private readonly Channel<string> _queue = Channel.CreateUnbounded<string>();
-    private readonly IProjectProcessor _processor;
-
-    public ProjectProcessingQueue(IProjectProcessor processor)
-    {
-        _processor = processor;
-    }
 
     public async Task Enqueue(string projectId) => await _queue.Writer.WriteAsync(projectId);
 
@@ -23,7 +17,7 @@ public class ProjectProcessingQueue : BackgroundService
             await _concurrency.WaitAsync(stoppingToken);
             try
             {
-                await _processor.ProcessAsync(projectId, stoppingToken);
+                await processor.ProcessAsync(projectId, stoppingToken);
             }
             finally
             {

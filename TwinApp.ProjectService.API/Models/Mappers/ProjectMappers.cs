@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
@@ -9,8 +8,8 @@ namespace TwinApp.ProjectService.API.Models.Mappers;
 public static class ProjectMappers
 {
     // Sections that map to ECS entities in the 3D simulation
-    public static readonly string[] EcsSections =
-    {
+    private static readonly string[] EcsSections =
+    [
         "Lights",
         "Parts",
         "Fixtures",
@@ -19,26 +18,26 @@ public static class ProjectMappers
         "Machines",
         "Sensors",
         "SecurityDevices",
+        "Programs",
         "Targets",
         "Workspaces",
         "Workstation",
         "PLC" // Here Optionally, need to check if worthy
-    };
+    ];
 
     // Sections that are purely metadata / descriptive
-    public static readonly string[] MetadataSections =
-    {
+    private static readonly string[] MetadataSections =
+    [
         "$id",
         "$type",
         "Version",
-        "Programs",
         "Measurements",
         "ReportItems",
         "MetrologyInfo",
         "Id",
         "Name",
         "SalesInfo"
-    };
+    ];
 
     public static MemoryStream FileToBsonDoc(IFormFile file)
     {
@@ -78,10 +77,10 @@ public static class ProjectMappers
         return memoryStream;
     }
     
-    public static (List<BsonDocument> ecsEntities, List<BsonDocument> metadata) DocumentToProjectEntities(BsonDocument doc)
+    public static (List<SectionEntity> ecsEntities, List<SectionEntity> metadata) DocumentToProjectEntities(BsonDocument doc)
     {
-        var ecsEntities = new List<BsonDocument>();
-        var metadata = new List<BsonDocument>();
+        var ecsEntities = new List<SectionEntity>();
+        var metadata = new List<SectionEntity>();
 
         foreach (var section in EcsSections.Concat(MetadataSections))
         {
@@ -96,7 +95,11 @@ public static class ProjectMappers
                 // Instead, process only nested items if they exist
                 if (value.AsBsonDocument.Contains("$values"))
                 {
-                    var parentId = Guid.NewGuid().ToString();
+                    // var newNestedEntities = new ProjectEntity(
+                    //     Id: Guid.NewGuid().ToString(),
+                    //     ProjectId: doc["Id"].ToString(),
+                    //     ParentId: doc{}
+                    // );
                     var nestedEntities = ExtractNestedEntities(new BsonDocument
                     {
                         { "Components", value },
@@ -104,18 +107,19 @@ public static class ProjectMappers
                         { "ProjectId", doc.Contains("Id") ? doc["Id"].ToString() : Guid.NewGuid().ToString() }
                     });
 
-                    ecsEntities.AddRange(nestedEntities);
+                    // ecsEntities.AddRange(nestedEntities);
                 }
             }
             else
             {
                 // Metadata section
-                metadata.Add(new BsonDocument
-                {
-                    { "SectionType", section },
-                    { "Data", value },
-                    { "CreatedAt", DateTime.UtcNow }
-                });
+                metadata.Add(new SectionEntity(
+                    EntityType: "Metadata",
+                    SectionType: section,
+                    ParentId: doc["Id"].ToString(),
+                    Components: value.AsBsonDocument,
+                    CreatedAt: DateTime.UtcNow
+                ));
             }
         }
 
@@ -123,9 +127,9 @@ public static class ProjectMappers
         return (ecsEntities, metadata);
     }
     
-    public static List<BsonDocument> ExtractNestedEntities(BsonDocument sectionEntity)
+    public static List<SectionEntity> ExtractNestedEntities(BsonDocument sectionEntity)
     {
-        var nestedEntities = new List<BsonDocument>();
+        var nestedEntities = new List<SectionEntity>();
 
         if (sectionEntity["Components"].AsBsonDocument.Contains("$values"))
         {
@@ -137,15 +141,13 @@ public static class ProjectMappers
 
             foreach (var item in sectionEntity["Components"]["$values"].AsBsonArray)
             {
-                var entity = new BsonDocument
-                {
-                    { "EntityType", item["$type"].AsString.Split(',')[0].Split('.').Last() }, // e.g., RobotExtension
-                    { "SectionType", sectionEntity["SectionType"].AsString },
-                    { "ParentId", sectionEntity["_id"] }, // Link to parent section
-                    { "ProjectId", sectionEntity["ProjectId"] },
-                    { "Components", item.AsBsonDocument }, // Keep nested components
-                    { "CreatedAt", DateTime.UtcNow }
-                };
+                var entity = new SectionEntity(
+                    EntityType: item["$type"].AsString.Split(',')[0].Split('.').Last(),
+                    SectionType: sectionEntity["SectionType"].AsString,
+                    ParentId: sectionEntity["_id"].AsString,
+                    Components: item.AsBsonDocument,
+                    CreatedAt: DateTime.UtcNow
+                    );
                 nestedEntities.Add(entity);
             }
         }
@@ -154,4 +156,8 @@ public static class ProjectMappers
     }
 
 
+    public static List<BsonDocument> DummyExtractionMethod(BsonDocument sectionEntity)
+    {
+        return new List<BsonDocument>();
+    }
 }
