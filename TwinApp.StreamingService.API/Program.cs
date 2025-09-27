@@ -34,32 +34,50 @@ lifetime.ApplicationStarted.Register(() =>
     var conn = new ConnectionFactory().CreateConnection(opts);
 
 
-    var sub1 = conn.SubscribeAsync("robots.*.state");
-    sub1.MessageHandler += (sender, args) =>
+    SubscribeToTopic("robots.*.state");
+    SubscribeToTopic("robots.state");
+    SubscribeToTopic("test");
+    return;
+
+    void SubscribeToTopic(string topic)
     {
-        var json = Encoding.UTF8.GetString(args.Message.Data);
-        Console.WriteLine($"[NATS] Robot state received: {json}");
-        // TO-DO: push to SignalR clients
-    };
-    sub1.Start();
+        var sub = conn.SubscribeAsync(topic);
+
+        sub.MessageHandler += (sender, args) =>
+        {
+            var json = Encoding.UTF8.GetString(args.Message.Data);
+            Console.WriteLine($"[NATS] Robot state received: {json}");
+            // TO-DO: push to SignalR clients
+        };
+        
+    }
     
-    var sub2 = conn.SubscribeAsync("test");
-    sub2.MessageHandler += (sender, args) =>
-    {
-        var json = Encoding.UTF8.GetString(args.Message.Data);
-        Console.WriteLine($"[NATS] Robot state received: {json}");
-        // TO-DO: push to SignalR clients
-    };
-    sub2.Start();
-    
-    var sub3 = conn.SubscribeAsync("robots.state");
-    sub3.MessageHandler += (sender, args) =>
-    {
-        var json = Encoding.UTF8.GetString(args.Message.Data);
-        Console.WriteLine($"[NATS] robots.state: {json}");
-        // TO-DO: push to SignalR clients
-    };
-    sub3.Start();
+    // var sub1 = conn.SubscribeAsync("robots.*.state");
+    // sub1.MessageHandler += (sender, args) =>
+    // {
+    //     var json = Encoding.UTF8.GetString(args.Message.Data);
+    //     Console.WriteLine($"[NATS] Robot state received: {json}");
+    //     // TO-DO: push to SignalR clients
+    // };
+    // sub1.Start();
+    //
+    // var sub2 = conn.SubscribeAsync("test");
+    // sub2.MessageHandler += (sender, args) =>
+    // {
+    //     var json = Encoding.UTF8.GetString(args.Message.Data);
+    //     Console.WriteLine($"[NATS] Robot state received: {json}");
+    //     // TO-DO: push to SignalR clients
+    // };
+    // sub2.Start();
+    //
+    // var sub3 = conn.SubscribeAsync("robots.state");
+    // sub3.MessageHandler += (sender, args) =>
+    // {
+    //     var json = Encoding.UTF8.GetString(args.Message.Data);
+    //     Console.WriteLine($"[NATS] robots.state: {json}");
+    //     // TO-DO: push to SignalR clients
+    // };
+    // sub3.Start();
 });
 
 app.Run();
